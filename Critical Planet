@@ -1,0 +1,101 @@
+Problem Description
+War between Republic and Separatist is escalating. The Separatist are on a new offensive. They have started blocking the path between the republic planets (represented by integers), so that these planets surrender due to the shortage of food and supplies. The Jedi council has taken a note of the situation and they have assigned Jedi Knight Skywalker and his Padawan Ahsoka to save the critical planets from blockade (Those planets or system of planets which can be accessed by only one path and may be lost if that path is blocked by separatist).
+Skywalker is preparing with the clone army to defend the critical paths. He has assigned Ahsoka to find the critical planets. Help Ahsoka to find the critical planets(C) in ascending order. You only need to specify those planets which have only one path between them and they cannot be accessed by any other alternative path if the only path is compromised.
+
+Constraints
+M <= 10000
+N <= 7000
+ 
+
+Input:
+First line contains two space separated integers M and N, where M denotes the number of paths between planets and N denotes the number of planets. next M lines, each contains two space separated integers, representing the planet numbers that have a path between them.
+
+Output
+C lines containing one integer representing the critical planet that they need to save in ascending order of the planet number if no planet is critical then print -1
+
+Example :
+
+Input
+
+3 4
+
+0 1
+
+1 2
+
+2 3
+
+ 
+
+Output
+
+0
+
+1
+
+2
+
+3
+
+Explanation
+
+Since all the planets are connected with one path and cannot be accessed by any alternative paths hence all the planets are critical.
+
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+int v;
+int t;
+int *Parent,*Visited,*Disc,*Low,*Ans;
+ 
+void Addedges(int a,int b,vector<int> *Adj)
+{
+  Adj[a].push_back(b);
+  Adj[b].push_back(a);
+}
+ 
+void Bridge(int i,vector<int> *Adj)
+{
+  Visited[i]=1;
+  Disc[i]=Low[i]=++t;
+  for(int j=0;j<Adj[i].size();j++)
+  {
+    int child=Adj[i][j];
+    if(Visited[child]==0)
+    {
+      Parent[child]=i;
+      Bridge(child,Adj);
+      Low[i]=min(Low[i],Low[child]);
+      if(Low[child]>Disc[i])
+      {
+          Ans[i]=1;Ans[child]=1;
+      }
+    }
+    else if(child!=Parent[i])
+    Low[i]=min(Low[i],Disc[child]);
+  }
+}
+ 
+int main()
+{
+    int e;
+  cin>>e>>v;
+  int a,b;
+  vector<int> Adj[v];
+  for(int i=0;i<e;i++)
+  {
+      cin>>a>>b;
+      Addedges(a,b,Adj);
+  }
+  Ans=new int[v];
+  Parent=new int[v];
+  Visited=new int[v];
+  for(int i=0;i<v;i++) {Parent[i]=-1;Visited[i]=0;Ans[i]=0;}
+  Disc=new int[v];
+  Low=new int[v];
+  for(int i=0;i<v;i++)
+  if(Visited[i]==0)
+  Bridge(i,Adj);
+  for(int i=0;i<v;i++)
+  if(Ans[i]) cout<<i<<endl;
+}
